@@ -1,6 +1,18 @@
 from pygame.locals import *
 import pygame
 
+WHITE = (255, 255, 255)
+RED = (255,  0,  0)
+BLUE = (0,0,255)
+GREEN = (0,255,0)
+BLACK = (0,0,0)
+
+pygame.init()
+
+screen = pygame.display.set_mode((800, 600))
+screen.fill(WHITE)
+pygame.display.flip()
+
 class Player:
     x = 10
     y = 10
@@ -33,25 +45,35 @@ class Maze:
                      1,1,1,0,0,0,0,0,1,0,
                      1,0,1,1,1,1,1,1,1,0,]
  
-    def draw(self,display_surf,image_surf):
+    def draw(self):
        bx = 0
        by = 0
-       for i in range(0,self.M*self.N):
-           print(i)
-           if self.maze[ bx + (by*self.M) ] == 1:
-               display_surf.blit(image_surf,( bx * 44 , by * 44))
- 
+       for i in range(0, self.M*self.N):
+           if self.maze[i] == 1:
+               pygame.draw.rect(screen, RED, [bx * 44, by * 44, 50, 20])
+               pygame.display.flip()
+
            bx = bx + 1
            if bx > self.M-1:
                bx = 0 
                by = by + 1
- 
+           
+           # this is just meant to be helpful to show what the param
+           horizontal_position = 400
+           vertical_position = 500
+           hieght = 20
+           width = 350
+           pygame.draw.rect(screen, BLACK, [horizontal_position, vertical_position, width, hieght])
+           pygame.display.flip()
+
 class App:
 
     windowWidth = 800
-    windowHight = 600
+    windowHeight = 600
     player = 0
     on_execute = ''
+    myMaze = Maze()
+    myMaze.draw()
 
     def __init__(self):
         self.running = True
@@ -60,12 +82,13 @@ class App:
         self.player = Player()
 
     def on_init(self):
-        pygame.init()
-        self.display_surf = pygame.display.set_mode((self.windowWidth, self.windowHight), pygame.HWSURFACE)
+        #pygame.init()
+        #self.display_surf = pygame.display.set_mode((self.windowWidth, self.windowHeight))
         
         pygame.display.set_caption('Maze')
         self.running = True
-        self.image_surf = pygame.image.load("Pygame.png").convert()
+        self.img = pygame.image.load("Pygame.png").convert()
+        pygame.display.flip()
  
     def on_event(self, event):
         if event.type == QUIT:
@@ -75,8 +98,7 @@ class App:
         pass
  
     def on_render(self):
-        self.display_surf.fill((0,0,0))
-        self.display_surf.blit(self.image_surf,(self.player.x,self.player.y))
+        screen.blit(self.img,(self.player.x,self.player.y))
         pygame.display.flip()
  
     def on_cleanup(self):
@@ -110,5 +132,6 @@ class App:
         self.on_cleanup()
 
 if __name__ == "__main__":
+
     App = App()
     App.on_execute()
